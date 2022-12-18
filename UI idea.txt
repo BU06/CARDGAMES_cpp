@@ -1,0 +1,172 @@
+
+#Form
+***한줄 코드
+	cout << left << setw(1) << "|";
+	cout << left << setw(52) << "message";
+	cout << right << setw(1) << "|" << endl;
+***
+
+
+|1
+--------------------------------------------------# "-" : 50 , " " : 58
+|2
+|3
+|4
+|5
+|6
+|7
+|8
+|9
+|10
+--------------------------------------------------
+================================
+
+
+#Select(1)
+***    select templet -easy to edit
+	//1
+	cout << left << setw(1) << "|" ;
+	cout << left << setw(30) << "BlackJack   madeby bu";
+	cout << setw(15) << "| my chip : "<<setw(6)<<basic::chip;
+	cout << right << setw(1) << "|" << endl;
+	//2
+	cout << left << setw(1) << "|";
+	cout << left << setw(51) << "===================================================";
+	cout << right << setw(1) << "|" << endl;
+	//3
+	cout << left << setw(1) << "|";
+	cout << left << setw(51) << "message";
+	cout << right << setw(1) << "|" << endl;
+	//4
+	cout << left << setw(1) << "|";
+	cout << left << setw(51) << "===================================================";
+	cout << right << setw(1) << "|" << endl;
+	//5
+	cout << left << setw(1) << "|";
+	cout << right << setw(15) << "Player" << right << setw(11) << "|";
+	cout << right << setw(15) << "Dealer";
+	cout << right << setw(11) << "|" << endl;
+	//6
+	cout << left << setw(1) << "|";
+	cout << left << setw(25) << "========================="<<setw(1)<<"|";
+	cout << left << setw(25) << "=========================";
+	cout << right << setw(1) << "|" << endl;
+	//7
+	cout << left << setw(1) << "|";
+	cout <<right << setw(10) << "1.PP" <<setw(5)<<" "  <<left<< setw(10) << "2.PP"<< setw(1) << "|";
+	cout << right << setw(10) << "1.DD" << setw(5) << " " << left << setw(10) << "2.DD";
+	cout << right << setw(1) << "|" << endl;
+	//8
+	cout << left << setw(1) << "|";
+	cout << left << setw(25) << "" << setw(1) << "|";
+	cout << left << setw(25) << "";
+	cout << right << setw(1) << "|" << endl;
+	//9
+	cout << left << setw(1) << "|";
+	cout << right << setw(10) << "3.PP" << setw(5) << " " << left << setw(10) << "4.PP" << setw(1) << "|";
+	cout << right << setw(10) << "3.DD" << setw(5) << " " << left << setw(10) << "4.DD";
+	cout << right << setw(1) << "|" << endl;
+	//10
+	cout << left << setw(1) << "|";
+	cout << left << setw(25) << "" << setw(1) << "|";
+	cout << left << setw(25) << "";
+	cout << right << setw(1) << "|" << endl;
+	//11
+	cout << left << setw(1) << "|";
+	cout << right << setw(10) << "5.PP" << setw(5) << " " << left << setw(10) << "6.PP" << setw(1) << "|";
+	cout << right << setw(10) << "5.DD" << setw(5) << " " << left << setw(10) << "6.DD";
+	cout << right << setw(1) << "|" << endl;
+	//12
+	cout << left << setw(1) << "|";
+	cout << left << setw(51) << "===================================================";
+	cout << right << setw(1) << "|" << endl;
+	//13
+	cout << left << setw(10) << "| Select : |";
+	cout << left << setw(10) << "(q)Stay" << left << setw(10) << "(w)Hit" << left << setw(15) << "(e)Surender" ;
+	cout << right << setw(6) << "|" << endl;
+	//14
+	cout << left << setw(1) << "|";
+	cout << left << setw(51) << "===================================================";
+	cout << right << setw(1) << "|" << endl;
+***
+
+*** select templet 
+	//1
+	cout << left << setw(1) << "|" ;cout << left << setw(30) << "BlackJack   madeby bu";cout << setw(15) << "| my chip : "<<setw(6)<<basic::chip;cout << right << setw(1) << "|" << endl;
+	//2
+	cout << left << setw(1) << "|";cout << left << setw(51) << "===================================================";cout << right << setw(1) << "|" << endl;
+	//3
+	cout << left << setw(1) << "|";cout << left << setw(51) << "message";cout << right << setw(1) << "|" << endl;
+	//4
+	cout << left << setw(1) << "|";cout << left << setw(51) << "===================================================";cout << right << setw(1) << "|" << endl;
+	//5
+	cout << left << setw(1) << "|";cout << right << setw(15) << "Player" << right << setw(11) << "|";cout << right << setw(15) << "Dealer";cout << right << setw(11) << "|" << endl;
+	//6
+	cout << left << setw(1) << "|";cout << left << setw(25) << "========================="<<setw(1)<<"|";cout << left << setw(25) << "=========================";cout << right << setw(1) << "|" << endl;
+	//7
+	cout << left << setw(1) << "|";cout <<right << setw(10) << "1.PP" <<setw(5)<<" "  <<left<< setw(10) << "2.PP"<< setw(1) << "|";cout << right << setw(10) << "1.DD" << setw(5) << " " << left << setw(10) << "2.DD";cout << right << setw(1) << "|" << endl;
+	//8
+	cout << left << setw(1) << "|";cout << left << setw(25) << "" << setw(1) << "|";cout << left << setw(25) << "";cout << right << setw(1) << "|" << endl;
+	//9
+	cout << left << setw(1) << "|";cout << right << setw(10) << "3.PP" << setw(5) << " " << left << setw(10) << "4.PP" << setw(1) << "|";cout << right << setw(10) << "3.DD" << setw(5) << " " << left << setw(10) << "4.DD";cout << right << setw(1) << "|" << endl;
+	//10
+	cout << left << setw(1) << "|";cout << left << setw(25) << "" << setw(1) << "|";cout << left << setw(25) << "";cout << right << setw(1) << "|" << endl;
+	//11
+	cout << left << setw(1) << "|";cout << right << setw(10) << "5.PP" << setw(5) << " " << left << setw(10) << "6.PP" << setw(1) << "|";cout << right << setw(10) << "5.DD" << setw(5) << " " << left << setw(10) << "6.DD";cout << right << setw(1) << "|" << endl;
+	//12
+	cout << left << setw(1) << "|";cout << left << setw(51) << "===================================================";cout << right << setw(1) << "|" << endl;
+	//13
+	cout << left << setw(10) << "| Select : |";cout << left << setw(10) << "(q)Stay" << left << setw(10) << "(w)Hit" << left << setw(15) << "(e)Surender" ;cout << right << setw(6) << "|" << endl;
+	//14
+	cout << left << setw(1) << "|";cout << left << setw(51) << "===================================================";cout << right << setw(1) << "|" << endl;
+	
+***
+|BlackJack madeby :bu         | my chip :  111 |1
+|===============================|2
+|message                                              |3
+|===============================|4
+|          player           |          dealer          | 5
+|-==============-|-==============-|6
+|       AA     AA         |       AA     AA        |  7                    
+|                            |                            |8
+|       AA     AA         |       AA     AA        |9 
+|                            |                            |10
+|       AA     AA         |       AA     AA        |11 
+|===============================|12
+|     (q)stay     (w)Hit     (e)Surender            |13
+|===============================|14
+
+#Select(1)
+|BlackJack madeby :bu         | my chip :  111 |
+|===============================|
+|message                                              |
+|===============================|
+|          player           |          dealer          | 
+|-==============-|-==============-|
+|       AA     AA         |       AA     AA        |                      
+|                            |                            |
+|       AA     AA         |       AA     AA        | 
+|                            |                            |
+|       AA     AA         |       AA     AA        | 
+|===============================|
+|     (q)stay     (w)Hit     (e)Surender            |
+|===============================|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
