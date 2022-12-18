@@ -11,6 +11,16 @@
 #include <ctime>
 #include <cstring>
 #include <conio.h>
+#include <istream>
+
+
+//블랙잭 칩 반환계수
+#define PUSH_prize 1
+#define WIN_prize 2
+#define LOSE_prize -1
+#define BLACKJACK_prize 4
+#define SURENDER_prize 0.5
+
 
 
 using namespace std;
@@ -18,7 +28,7 @@ using namespace std;
 //선언
 namespace basic{
 	//전체---------------------------------------------------
-	int chip;
+	int chip,prize,bet;
 	
 	
 	//&정수형변수A,&정수형변수B 를 받아 A와 B의 값을 바꾸는 함수
@@ -30,29 +40,31 @@ namespace basic{
 
 	//선택 q w e r
 	//    0 1 2 3
-	int select() {
+	int select_qwer() {
+		
 		int order;
-		order = _getch();
-		enum trg{q=113,w=119,e=101,r=114};
+		cin >> order;
+		
 		switch (order) 
 		{
-		case q:
+		case 113:
 			
 			return 0;
-		case w:
+		case 119:
 			return 1;
-		case e:
+		case 101:
 			return 2;
-		case r:
+		case 114:
 			return 3;
 		default:
-			system("cls");
-			cout << "ERROR : [Main//basic::selct// -switch logic- ]"<<endl;
-			exit(-1);
+			return 5;;
 		}
 	}
 
-
+	void chipsum(int x) {
+		basic::chip = basic::bet * x;
+		basic::prize = basic::bet - basic::chip;
+	}
 	//------------------------------------------------------
 }
 
@@ -164,20 +176,13 @@ namespace Trump{
 	}
 
 	// 순서배열 order[]의 순환, 그리고 카드번호 발행(완)
-	int getorder() {
-		int FirstOrder = Trump::order[0];
-		if (Trump::ordercount <= 51) {
-			for (int i = 0; i < 51; i++) {
-				Trump::order[i] = Trump::order[i + 1];
-			}Trump::order[51] = FirstOrder;
-		}
-		else {
+	int getorder(int count) {
+		if (Trump::ordercount > 51) {
 			Trump::ordercount = 0;
 			Trump::card_shuffle();
-			FirstOrder = Trump::order[0];
 		}
 		Trump::ordercount++;
-		return(FirstOrder);
+		return(Trump::order[count]);
 	}
 
 	//order[] 배열의 순서대로 카드의 정보를 확인하기
@@ -201,57 +206,19 @@ namespace blackjack {
 	//블랙잭
 	
 	
-
-    int quit = 0;
-	//플레이어와 딜러가 각각 가지고있는 카드들의 딜 배열
-	int player_slot[7] = { 0 }, dealer_slot[7] = { 0 };
-	//턴 수
-	int pase_count=0;
+	
+    int quit;//블랙잭 메인스트림  종료조건
+	
+	int player_slot[7] = { 0 }, dealer_slot[7] = { 0 };//플레이어와 딜러가 각각 가지고있는 카드들의 딜 배열
+	
+	int pase_count;//턴 수
 
 	
 
     //interface
 	namespace ui {
 		
-		struct placedcardinfo
-		{
-			char shape[10];
-			char number[10];
-			int order;
-			
-		}userinfo[7],dealerinfo[7];
 
-		//배치된 카드 정보 
-		void setcardinfo() {
-			
-			for (int i = 0; i < 7; i++) {
-				int userorder = blackjack::player_slot[i];
-				int dealerorder = blackjack::dealer_slot[i];
-
-				blackjack::ui::userinfo[i].order= userorder;
-				strcpy(blackjack::ui::userinfo[i].shape, Trump::card[userorder].shape);
-				strcpy(blackjack::ui::userinfo[i].number, Trump::card[userorder].number);
-
-				blackjack::ui::dealerinfo[i].order = dealerorder;
-				strcpy(blackjack::ui::dealerinfo[i].shape, Trump::card[userorder].shape);
-				strcpy(blackjack::ui::dealerinfo[i].number, Trump::card[dealerorder].number);
-			}
-		}
-
-		void fin_BlackJack() {
-			system("cls");
-			cout << "blackjack" << endl;
-		}
-
-		void fin_win() {
-			system("cls");
-			cout << "win" << endl;
-		}
-
-		void fin_lose() {
-			system("cls");
-			cout << "lose" << endl;
-		}
 		
 		//상단메세지
 		//선택지1,2,3
@@ -275,66 +242,72 @@ namespace blackjack {
 			cout << left << setw(1) << "|"; cout << left << setw(25) << "=========================" << setw(1) << "|"; cout << left << setw(25) << "========================="; cout << right << setw(1) << "|" << endl;
 			//7
 			cout << left << setw(1) << "|"; 
-			countlogic1=1, countlogic2=2, callinfo_1=0, callinfo_2=1;
-			if (pase_count >= countlogic1) {
+			
+			if (pase_count >= 1) {
 				
 
-				cout << right << setw(8) << blackjack::ui::userinfo[callinfo_1].shape << setw(2) << blackjack::ui::userinfo[callinfo_1].number<< setw(5) << " " ;
-				if (pase_count >= countlogic2)
-					cout << left << right << setw(8) << blackjack::ui::userinfo[callinfo_2].shape << setw(2) << blackjack::ui::userinfo[callinfo_2].number;
+				cout << right << setw(8) << Trump::card[blackjack::player_slot[0]].shape <<left<< setw(2) << Trump::card[blackjack::player_slot[0]].number<< setw(5) << " " ;                                   
+				if (pase_count >= 2)
+					cout << right << setw(8) << Trump::card[blackjack::player_slot[1]].shape <<left<< setw(2) << Trump::card[blackjack::player_slot[1]].number;
 				else
-					cout << setw(10) << " ";
-				cout << setw(1) << "|";
-				cout << right << setw(8) << blackjack::ui::dealerinfo[callinfo_1].shape << setw(2) << blackjack::ui::dealerinfo[callinfo_1].number << setw(5) << " ";
-				if (pase_count >= countlogic2)
-					cout << left << right << setw(8) << blackjack::ui::dealerinfo[callinfo_2].shape << setw(2) << blackjack::ui::dealerinfo[callinfo_2].number;
+					cout << setw(9) << " ";
+				cout <<right<< setw(3) << "|";
+				cout << right << setw(8) << Trump::card[blackjack::dealer_slot[0]].shape << left << setw(2) << Trump::card[blackjack::dealer_slot[0]].number << setw(5) << " ";
+				if (pase_count >= 2)
+					cout << left << right << setw(8) << Trump::card[blackjack::dealer_slot[1]].shape << left << setw(2) << Trump::card[blackjack::dealer_slot[1]].number;
 				else
-					cout << setw(10) << " ";
+					cout << setw(9) << " ";
 			}
 			else
-				cout << right << setw(26) << "|" << setw(25) << " ";
-			cout << right << setw(1) << "|" << endl;
+				cout << right << setw(26) << "|" << setw(23) << " ";
+			cout << right << setw(3) << "|" << endl;
 			//8
-			cout << left << setw(1) << "|"; cout << left << setw(25) << "" << setw(1) << "|"; cout << left << setw(25) << ""; cout << right << setw(1) << "|" << endl;
-			//9
+			cout << left << setw(1) << "|"; cout << left << setw(25) << " " << setw(1) << "|"; cout << left << setw(25) << " "; cout << right << setw(1) << "|" << endl;
+			//9   수정완료
 			cout << left << setw(1) << "|";
-			countlogic1 = 3, countlogic2 = 4, callinfo_1 = 2, callinfo_2 = 3;
-			if (pase_count >= countlogic1) {
-				
+			
+			if (pase_count >= 3) {
 
-				cout << right << setw(8) << blackjack::ui::userinfo[callinfo_1].shape << setw(2) << blackjack::ui::userinfo[callinfo_1].number << setw(5) << " ";
-				if (pase_count >= countlogic2)
-					cout << left << right << setw(8) << blackjack::ui::userinfo[callinfo_2].shape << setw(2) << blackjack::ui::userinfo[callinfo_2].number;
+
+				cout << right << setw(8) << Trump::card[blackjack::player_slot[2]].shape << left << setw(2) << Trump::card[blackjack::player_slot[2]].number << setw(5) << " ";
+				if (pase_count >= 4)
+					cout << right << setw(8) << Trump::card[blackjack::player_slot[3]].shape << left << setw(2) << Trump::card[blackjack::player_slot[3]].number;
 				else
-					cout << setw(10) << " ";
-				cout << setw(1) << "|";
-				cout << right << setw(8) << blackjack::ui::dealerinfo[callinfo_1].shape << setw(2) << blackjack::ui::dealerinfo[callinfo_1].number << setw(5) << " ";
-				if (pase_count >= countlogic2)
-					cout << left << right << setw(8) << blackjack::ui::dealerinfo[callinfo_2].shape << setw(2) << blackjack::ui::dealerinfo[callinfo_2].number;
+					cout << setw(9) << " ";
+
+				cout << right << setw(3) << "|";
+				cout << right << setw(8) << Trump::card[blackjack::dealer_slot[2]].shape<< left << setw(2) << Trump::card[blackjack::dealer_slot[2]].number << setw(5) << " ";
+				if (pase_count >= 4)
+					cout << left << right << setw(8) << Trump::card[blackjack::dealer_slot[3]].shape << left << setw(2) << Trump::card[blackjack::dealer_slot[3]].number;
 				else
-					cout << setw(10) << " ";
+					cout << setw(9) << " ";
 			}
 			else
+				cout << right << setw(26) << "|" << setw(23) << " ";
+			cout << right << setw(3) << "|" << endl;
+
 			//10
-			cout << left << setw(1) << "|"; cout << left << setw(25) << "" << setw(1) << "|"; cout << left << setw(25) << ""; cout << right << setw(1) << "|" << endl;
+			cout << left << setw(1) << "|"; cout << left << setw(25) << " " << setw(1) << "|"; cout << left << setw(25) << " "; cout << right << setw(1) << "|" << endl;
 			//11
-			countlogic1 = 5, countlogic2 = 6, callinfo_1 = 4, callinfo_2 = 5;
-			if (pase_count >= countlogic1) {
+			cout << left << setw(1) << "|";
+			if (pase_count >= 5) {
 				
 
-				cout << right << setw(8) << blackjack::ui::userinfo[callinfo_1].shape << setw(2) << blackjack::ui::userinfo[callinfo_1].number << setw(5) << " ";
-				if (pase_count >= countlogic2)
-					cout << left << right << setw(8) << blackjack::ui::userinfo[callinfo_2].shape << setw(2) << blackjack::ui::userinfo[callinfo_2].number;
+				cout << right << setw(8) << Trump::card[blackjack::player_slot[4]].shape << left << setw(2) << Trump::card[blackjack::player_slot[4]].number << setw(5) << " ";
+				if (pase_count >= 6)
+					cout << left << right << setw(8) << Trump::card[blackjack::player_slot[5]].shape << left << setw(2) << Trump::card[blackjack::player_slot[5]].number;
 				else
-					cout << setw(10) << " ";
-				cout << setw(1) << "|";
-				cout << right << setw(8) << blackjack::ui::dealerinfo[callinfo_1].shape << setw(2) << blackjack::ui::dealerinfo[callinfo_1].number << setw(5) << " ";
-				if (pase_count >= countlogic2)
-					cout << left << right << setw(8) << blackjack::ui::dealerinfo[callinfo_2].shape << setw(2) << blackjack::ui::dealerinfo[callinfo_2].number;
+					cout << setw(9) << " ";
+				cout <<right<< setw(3) << "|";
+				cout << right << setw(8) << Trump::card[blackjack::dealer_slot[4]].shape << left << setw(2) << Trump::card[blackjack::dealer_slot[4]].number << setw(5) << " ";
+				if (pase_count >= 6)
+					cout << left << right << setw(8) << Trump::card[blackjack::dealer_slot[5]].shape << left << setw(2) << Trump::card[blackjack::dealer_slot[5]].number;
 				else
-					cout << setw(10) << " ";
+					cout << setw(9) << " ";
 			}
 			else
+				cout << right << setw(26) << "|" << setw(23) << " ";
+			cout << right << setw(3) << "|"<<endl;
 			//12
 			cout << left << setw(1) << "|"; cout << left << setw(51) << "==================================================="; cout << right << setw(1) << "|" << endl;
 			//13
@@ -344,7 +317,32 @@ namespace blackjack {
 
 		}
 
+		void push() {
+			system("cls");
+			
+			cout << endl << setw(30) << "Push" << endl << endl << setw(35)<<"price : +" <<basic::prize;
+		}
+		void win() {
+			system("cls");
+
+			cout << endl << setw(30) << "Win" << endl << endl << setw(35) << "price : +" << basic::prize;
+		}
+		void lose() {
+			system("cls");
+
+			cout << endl << setw(30) << "Lose" << endl << endl << setw(35) << "price : +" << basic::prize;
+		}
+		void BLACKJACK() {
+			system("cls");
+
+			cout << endl << setw(30) << "Win" << endl << endl << setw(35) << "price : " << basic::prize;
+		}
+		void bet() {
+			cout << endl << setw(30) << "블랙잭" << endl <<setw(26)<<"칩 :  "<<basic::chip << endl << endl << setw(35) << "배팅하세요 : ";
+		}
 	};
+
+
 	//스코어 판별 플레이어의 딜슬롯과 딜러의 딜슬롯을받아 결과를 
 	// 0 : 21            => 항상 win + blackjack
 	// 1 : 딜러<플레이어  => 종료시 win
@@ -355,75 +353,113 @@ namespace blackjack {
 	int  result(int player_slot[],int dealer_slot[]) {
 		int dealer_score = 0, player_score = 0;
 		int dealer_deal, player_deal;
-		int Ace = 0;
+		int dealer_order, player_order;
+		int playerAce = 0,dealerAce=0;
 		for (int i = 0; i < 7; i++) {
-			dealer_deal = dealer_slot[i];
-			player_deal = player_slot[i];
-			if (player_slot[i] == 1|| dealer_slot[i] == 1) {
-				Ace++;
-			}			
+			dealer_order = dealer_slot[i];
+			player_order = player_slot[i];
+			dealer_deal = Trump::card[dealer_order].deal;
+			player_deal = Trump::card[player_order].deal;
+			if (player_deal == 1)
+				playerAce++;
+			if (dealer_deal == 1)
+				dealerAce++;
 			player_score += player_deal;
 			dealer_score += dealer_deal;
 		}
 		//블랙잭 판별
-		if (Ace != 0) {
+		if (playerAce != 0) {
 			if (player_score + 10 == 21)
 				return 0;//BLACK JACK!
 		}
-		//플레이어 21 넘겼나?
-		else if (player_score > 21) {
-			return 4;//lose
+		if (dealerAce != 0) {
+			if (dealer_score + 10 == 21)
+				return 4;//Dealer BLACK JACK  lose
 		}
 		//딜러 21 넘겼나?
 		else if (dealer_score > 21) {
 			return 2;//win
 		}
-
-		else if (player_score >= dealer_score) {
-			//플레이어==딜러
-			if (player_score == dealer_score)
-				return 5;//tie
-			//플레이어>딜러
-			else {
-
-				return 1;//win
-
-			}
+		//플레이어 21 넘겼나?
+		else if (player_score > 21) {
+			return 4;//lose
 		}
-		else
+		else if (player_score == dealer_score)//플레이어==딜러
+				return 5;//tie
+		//플레이어>딜러
+		else if (player_score > dealer_score) {										
+			return 1;//win			
+		}
+		else if (player_score < dealer_score)
 			return 3;//lose
+		else {
+			return 6;
+		}
+			
 	}
 
 	//한 턴
 	//카드분배, 즉시패배,즉시승리,블랙잭판별
 	void pase() {
-		blackjack::player_slot[blackjack::pase_count] = Trump::getorder();
-		blackjack::dealer_slot[blackjack::pase_count] = Trump::getorder();
-		blackjack::pase_count++;
+		int psn = blackjack::pase_count;
+
+		blackjack::player_slot[psn] = Trump::getorder(Trump::ordercount);
+		blackjack::dealer_slot[psn] = Trump::getorder(Trump::ordercount);
+		
 		
 		blackjack::ui::select("카드 배치중...", "", "", "");
-		Sleep(600);
+		Sleep(1500);
 
 		switch (blackjack::result(player_slot, dealer_slot))
-		
 		{
-			case 0:
-				blackjack::ui::fin_BlackJack();
-				break;
-			case 2:
-				blackjack::ui::fin_win();
-				break;
-			case 4:
-				blackjack::ui::fin_lose();
-				break;
+		case 0:
+			blackjack::ui::BLACKJACK();
+			blackjack::quit++;			
+			break;
+		case 2:
+			blackjack::ui::win();
+			blackjack::quit++;
+			break;
+		case 4:
+			blackjack::ui::lose();
+			blackjack::quit++;
+			break;
 		default:
 			break;
 		}
-		
+		blackjack::pase_count++;
 	}
 
-
-	void player_select_pase(int *quit) {
+	void stay() {
+		int call_result = blackjack::result(blackjack::player_slot, blackjack::dealer_slot);
+		switch (call_result) {
+		case 1://win
+			basic::chipsum(WIN_prize);
+			blackjack::ui::win();
+			Sleep(1500);
+			break;
+		case 2://lose
+			basic::chipsum(LOSE_prize);
+			blackjack::ui::lose();
+			Sleep(1500);
+			break;
+		case 3://tie
+			basic::chipsum(PUSH_prize);
+			blackjack::ui::push();
+			Sleep(1500);
+			break;
+		default:
+			break;
+		}
+		blackjack::quit++;
+	}
+	void surrender() {
+		basic::chipsum(SURENDER_prize);
+		blackjack::ui::push();
+		Sleep(1500);
+		blackjack::quit++;
+	}
+	void player_select_pase() {
 		char message[50] = "선택하세요 !";
 		if (pase_count == 2) {
 			blackjack::ui::select(message, "(q)Hit", "(w)Stay", "(e)Surrender");
@@ -433,24 +469,25 @@ namespace blackjack {
 			blackjack::ui::select(message, "(q)Hit", "(w)Stay", "");
 		}
 
-		int input = basic::select();
-		//q(Stay),w(Hit),e(surender)
-		//q(stay),w(hit)
+		int input = basic::select_qwer();
+		//q(Hit),w(Stay),e(surender)
+		//q(hit),w(stay)
 		strcpy(message, "선택하세요 !");
 		switch (input)
 		{
-		case 0:
-			//interface stay
-			//endgame(1);
-			blackjack::quit++;
-			break;
 		case 1:
-			//interface Hit
-			pase();
+			
+			stay();
+			
 			break;
-		case 3: 
+		case 0:
+			
+			pase();
+
+			break;
+		case 2: 
 			if (blackjack::pase_count == 2) {
-				//endgame(0);
+				surrender();
 				blackjack::quit++;
 				break;
 			}
@@ -460,6 +497,10 @@ namespace blackjack {
 			break;
 		}
 	}
+	void bet() {
+		blackjack::ui::bet();
+		cin >> basic::bet;
+	}
 
 
 	
@@ -467,17 +508,19 @@ namespace blackjack {
 	
 	//블랙잭 메인 스트림
 	void Stream() {
+
+
+		blackjack::pase_count = 0;
+		blackjack::quit = 0;
 		
-		
+		blackjack::bet();
 
 		Trump::SimpleCardSet();
-		blackjack::ui::setcardinfo();
-		blackjack::ui::select("첫 카드 분배중...", "", "", "");
-		blackjack::pase();
-		blackjack::pase();
 		
+		blackjack::pase();
+		blackjack::pase();
 		while  (blackjack::quit == 0) {
-			blackjack::player_select_pase(&quit);		
+			blackjack::player_select_pase();		
 		}
 		
 	}
@@ -489,16 +532,9 @@ namespace blackjack {
 
 int main()
 {
-	//메인스트림
-	/*Trump::card_set();
-	Trump::card_shuffle();
+	srand((unsigned int)time(NULL));
 
-	Trump::card_cheak();
-	
-	cout<<"겟 오더 :" << Trump::getorder() << endl;
-	Trump::card_cheak();*/
-
-	
+	blackjack::Stream();
 	return 0;
 }
 
