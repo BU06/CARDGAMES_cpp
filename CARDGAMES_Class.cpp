@@ -86,12 +86,13 @@ TrumpCard::TrumpCard() {
 		order[cardslot] = cardslot;
 	}
 }
-//TrumpCard	protected:
 int TrumpCard::getorder() {
-	if (order_count > 51) {
-		order_count = 51;
+	order_count++;
+	if (order_count > 52) {
+		order_count = 0;
+		shuffle();
 	}
-	return 0;
+	return order[order_count];
 }
 void TrumpCard::shuffle() {
 	for (int i = 0; i < 52; i++) {
@@ -100,6 +101,7 @@ void TrumpCard::shuffle() {
 		//basic::swapint(&Trump::order[i], &Trump::order[random_int]);
 	}
 }
+//TrumpCard	protected:
 void TrumpCard::ShowAllCards() {
 	for (int cardslot = 0;cardslot<52;cardslot++){
 		cout <<right<<setw(2)<< cardslot <<left<<setw(11)<< ": order"<<order[cardslot];
@@ -115,9 +117,7 @@ void TrumpCard::ShowAllCards() {
 void BlackJack::TestProtectedFunc() {
 
 }
-
 //Blackjack Public:
-//Blackjack Protected:
 BlackJack::BlackJack() {
 	pasecount = 0;
 	player.acecount = 0;
@@ -131,12 +131,47 @@ BlackJack::BlackJack() {
 		dealer.carddeal[i] = 0;
 	}
 }
-void BlackJack::getcondition(int cardorder, charinfo& playerdealer) {
-	
-	if (playerdealer.carddeal[cardorder] == 21)
+void BlackJack::stream(){
+	deck.shuffle();
+
+}
+//Blackjack Protected:
+int BlackJack::get_carddeal(int cardorder){
+	int deal = ((cardorder + 1) % 13);
+	switch (deal)
+	{
+	case 11://J
+	case 12://Q
+	case 0://K
+		return 10;
+		break;
+	default:
+		return deal;
+		break;
+	}
+}
+void BlackJack::get_card(charinfo&playerdealer){
+	int newplace=0;
+	for (int count = 0; playerdealer.carddeal[count] != 0; count++) {
+		newplace++;
+	}
+	int neworder = deck.getorder();
+	playerdealer.cardslot[newplace] = neworder;
+	playerdealer.carddeal[newplace] = get_carddeal(neworder);
+}
+void BlackJack::load_score(charinfo& playerdealer) {
+	int score = 0;
+	for (int cardslot = 0; playerdealer.carddeal != 0; cardslot++) {
+		score += playerdealer.carddeal[cardslot];
+		count_ace(cardslot, playerdealer);
+	}
+	playerdealer.score = score;
+}
+void BlackJack::cheak_special_condition(int cardorder, charinfo& playerdealer) {
+	load_score(playerdealer);
+	if (playerdealer.acecount != 0 && playerdealer.score + 10 == 21) 
 		playerdealer.condition = BLACKJACK;
-	
-	if (playerdealer.score > 21)
+	else if (playerdealer.score > 21)
 		playerdealer.condition = BUST;
 	else
 		playerdealer.condition = DEFAULT;
@@ -145,19 +180,21 @@ void BlackJack::getcondition(int cardorder, charinfo& playerdealer) {
 	else
 		playerdealer.condition = DEFAULT;
 }
-void BlackJack::countace(int cardorder, charinfo& playerdealer) {
+void BlackJack::count_ace(int cardorder, charinfo& playerdealer) {
 		if (playerdealer.carddeal[cardorder] == 1)
 			playerdealer.acecount++;
-	
 }
-//void BlackJack::loadscore() {
-//	int dealerresultscore = 0, playerresultscore = 0;
-//	for (int i = 0; i < 10; i++) {
-//		countace(i, player);
-//		countace(i, dealer);
-//		if (dealer.acecount != 0)
-//			dealerresultscore += dealer.carddeal[i];
-//		playerresultscore += player.carddeal[i];
-//	}
-//}
-ÀÛ¾÷Áß
+void BlackJack::load_normal_conditon() {
+	
+	load_score(player); load_score(dealer);
+
+	if (player.score > dealer.score) {
+		player.condition = WIN; dealer.condition = LOSE;
+	}
+	else if (player.score == dealer.score) {
+		player.condition = PUSH; dealer.condition = PUSH;
+	}
+	else if (player.score < dealer.score) {
+		player.condition = LOSE; dealer.condition = WIN;
+	}
+}
